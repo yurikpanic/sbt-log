@@ -7,6 +7,8 @@
 
 (in-package :sbt-log)
 
+(defvar *invoke-debugger* nil)
+
 (defvar *bt-log-stream* t)
 
 (defun print-file-pos (src)
@@ -38,8 +40,13 @@
   (declare (ignore dh))
   (format *bt-log-stream* "Ooops: ~A~%" condition)
   (print-bt)
-  (invoke-debugger condition))
+  (if *invoke-debugger*
+      (funcall *invoke-debugger* condition)
+      (invoke-debugger condition)))
 
-(defmacro with-bt-log (&body body)
-  `(let ((*debugger-hook* #'sbt-debug))
+(defmacro with-bt-log ((&key (out-stream t) invoke-debugger) &body body)
+  `(let ((*debugger-hook* #'sbt-debug)
+         (*bt-log-stream* ,out-stream)
+         (*invoke-debugger* ,invoke-debugger))
      ,@body))
+
