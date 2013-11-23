@@ -7,7 +7,7 @@ After backtrace was logged the control is passed to upper level debugger if othe
 Usage
 -----
 
-To log error backtraces wrap code with this macro:
+To log backtraces on error wrap code with this macro:
 
         (with-bt-log ((&key (out-stream t) invoke-debugger print-vars) &body body))
 
@@ -34,19 +34,19 @@ Other exported symbols
 
 *  A stream to print backtraces to (defualt - t)
 
-       *bt-log-stream*
+       \*bt-log-stream\*
 
 *  A function to be called instead of standard invoke-debugger (default - nil)
 
-       *invoke-debugger*
+       \*invoke-debugger\*
 
 *  A boolean controling whether to print local vars (default - nil)
 
-       *print-vars*
+       \*print-vars\*
 
 *  A boolean whether to print timestamp before backtrace (default - t)
 
-       *print-timestamp*
+       \*print-timestamp\*
 
 
 *  A function to print current backtrace
