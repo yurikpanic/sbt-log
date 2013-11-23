@@ -72,10 +72,15 @@
       (funcall *invoke-debugger* condition)
       (invoke-debugger condition)))
 
-(defmacro with-bt-log ((&key (out-stream t) invoke-debugger print-vars) &body body)
-  `(let ((*debugger-hook* #'sbt-debug)
-         (*bt-log-stream* ,out-stream)
+(defmacro with-bt-log ((&key (out-stream t) invoke-debugger print-vars (unhandled-only t)) &body body)
+  `(let ((*bt-log-stream* ,out-stream)
          (*invoke-debugger* ,invoke-debugger)
          (*print-vars* ,print-vars))
-     ,@body))
+     ,(if unhandled-only
+          `(let ((*debugger-hook* #'sbt-debug))
+             ,@body)
+          `(handler-bind ((error #'(lambda (c)
+                                     (declare (ignore c))
+                                     (print-bt))))
+             ,@body))))
 

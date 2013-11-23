@@ -9,11 +9,12 @@ Usage
 
 To log backtraces on error wrap code with this macro:
 
-        (with-bt-log ((&key (out-stream t) invoke-debugger print-vars) &body body))
+        (with-bt-log ((&key (out-stream t) invoke-debugger print-vars (unhandled-only t)) &body body))
 
 * out-stream - a stream to print backtraces to.
 * invoke-debugger - a function to be called after backtrace is logged. If this parameter is nil - standard invoke-debugger will be called.
 * print-vars - enable printing of local vars.
+* unhandled-only - print backtrace only for unhandled errors (those which triggered debugger). If nil - print backtrace for all errors, but let error propagate further.
 
 ### Example
 
@@ -28,6 +29,16 @@ Sometimes we need to exit on error instead of entering debugger:
                                                (declare (ignore condition))
                                                (sb-sys:os-exit 42))) 
           (+ 4 (/ 5 0)))
+
+### Example
+
+If we need just log errror, but leave it to be handled at upper levels.
+
+        (handler-case
+             (with-bt-log (:unhandled-only nil)
+               (/ 5 0))   
+          (division-by-zero (e) 42))
+
 
 Other exported symbols
 ----------------------
